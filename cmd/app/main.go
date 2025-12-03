@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/finance/apiService/config"
-	"github.com/finance/apiService/internal/app"
+	"github.com/Alice00021/test_api/config"
+	"github.com/Alice00021/test_api/internal/app"
 )
 
 func main() {

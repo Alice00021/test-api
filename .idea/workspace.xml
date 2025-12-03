@@ -5,30 +5,60 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bb72d72-1950-4b05-a6f0-d77b1a341c87" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../test_front/src/app/routes/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/env.d.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/api/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/model/useBooks.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/ui/BookCard.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/ui/BookList.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/pages/books/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/shared/api/base.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/src/shared/types/book.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../test_front/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/errors/error.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/middleware/jwt_auth.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/v1/author.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/v1/book.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/v1/command.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/controller/http/v1/operation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/entity/back/author.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/entity/back/book.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/entity/back/command.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/entity/back/operation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/entity/back/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repo/rmq/back/author.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repo/rmq/back/book.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repo/rmq/back/command.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repo/rmq/back/operation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/usecase/contracts.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/utils/routerUtils.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$" beforeDir="false" afterPath="$PROJECT_DIR$" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/app/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/app/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/controller/http/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/controller/http/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/di/usecase.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/di/usecase.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../test_backend" beforeDir="false" afterPath="$PROJECT_DIR$/../test_backend" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test_front" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test_front/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test_front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../test_front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test_backend/internal/controller/amqp_rpc/v1/author.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test_backend/internal/controller/amqp_rpc/v1/author.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test_backend/internal/controller/amqp_rpc/v1/book.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test_backend/internal/controller/amqp_rpc/v1/book.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test_common" beforeDir="false" afterPath="$PROJECT_DIR$/../test_common" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test_common/pkg/rabbitmq/rmq_rpc/server/options.go" beforeDir="false" afterPath="$PROJECT_DIR$/../test_common/pkg/rabbitmq/rmq_rpc/server/options.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
   <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64" />
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="15244d37e4a444f5cd1358ade7ba6d32c6d15eed" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -38,31 +68,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Go Build.go build test_go/cmd/app.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/alice/test_go_monorepo/test_go&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build test_go/cmd/app.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "main",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/home/alice/test_go_monorepo/test_api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="go build test_go/cmd/app" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="test_go" />

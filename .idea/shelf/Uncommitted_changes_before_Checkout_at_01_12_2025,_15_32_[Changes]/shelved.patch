@@ -1,0 +1,263 @@
+Index: cmd/app/main.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/cmd/app/main.go b/cmd/app/main.go
+new file mode 100644
+--- /dev/null	(date 1764592282006)
++++ b/cmd/app/main.go	(date 1764592282006)
+@@ -0,0 +1,19 @@
++package main
++
++import (
++	"log"
++
++	"github.com/Alice00021/test_api/config"
++	"github.com/Alice00021/test_api/internal/app"
++)
++
++func main() {
++	// Configuration
++	cfg, err := config.NewConfig()
++	if err != nil {
++		log.Fatalf("Config error: %s", err)
++	}
++
++	// Run
++	app.Run(cfg)
++}
+Index: internal/app/app.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/internal/app/app.go b/internal/app/app.go
+new file mode 100644
+--- /dev/null	(date 1764592282010)
++++ b/internal/app/app.go	(date 1764592282010)
+@@ -0,0 +1,94 @@
++// Package app configures and runs application.
++package app
++
++import (
++	"fmt"
++	"github.com/Alice00021/test_api/internal/di"
++	"os"
++	"os/signal"
++	"syscall"
++
++	"github.com/Alice00021/test_api/pkg/rabbitmq/rmq_rpc/client"
++	"github.com/finance/common/pkg/websocket"
++
++	"github.com/gin-gonic/gin"
++
++	"github.com/Alice00021/test_api/config"
++	amqprpc "github.com/Alice00021/test_api/internal/controller/amqp_rpc"
++	"github.com/Alice00021/test_api/internal/controller/http"
++	"github.com/finance/common/pkg/httpserver"
++	"github.com/finance/common/pkg/logger"
++	"github.com/finance/common/pkg/postgres"
++	"github.com/finance/common/pkg/rabbitmq/rmq_rpc/server"
++)
++
++// Run creates objects via constructors.
++func Run(cfg *config.Config) {
++	l := logger.NewMultipleWriter(
++		logger.Level(cfg.Log.Level),
++		logger.FileName(cfg.Log.FileName),
++	)
++
++	// Repository
++	pg, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.PoolMax))
++	if err != nil {
++		l.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
++	}
++	defer pg.Close()
++
++	// RabbitMQ RPC Client
++	rmqClient, err := client.New(cfg.RMQ.URL, cfg.RMQ.ServerExchange, cfg.RMQ.ClientExchange, cfg.App.Name, cfg.RMQ.ClientPrefix)
++	if err != nil {
++		l.Fatal("RabbitMQ RPC Client - init error - client.New")
++	}
++
++	// Websocket
++	wsServer := websocket.New()
++
++	// UseCase
++	uc := di.NewUseCase(rmqClient, wsServer, cfg)
++
++	// RabbitMQ RPC Server
++	rmqRouter := amqprpc.NewRouter(uc, l)
++
++	rmqServer, err := server.New(cfg.RMQ.URL, cfg.RMQ.ServerExchange, cfg.App.Name, rmqRouter, l, cfg.RMQ.ClientPrefix)
++	if err != nil {
++		l.Fatal(fmt.Errorf("app - Run - rmqServer - server.New: %w", err))
++	}
++
++	// HTTP Server
++	handler := gin.New()
++	http.NewRouter(handler, cfg, l, uc, wsServer)
++	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
++
++	// Waiting signal
++	interrupt := make(chan os.Signal, 1)
++	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
++
++	select {
++	case s := <-interrupt:
++		l.Info("app - Run - signal: " + s.String())
++	case err = <-httpServer.Notify():
++		l.Error(fmt.Errorf("app - Run - httpServer.Notify: %w", err))
++	case err = <-rmqServer.Notify():
++		l.Error(fmt.Errorf("app - Run - rmqServer.Notify: %w", err))
++	}
++
++	// Shutdown
++	err = httpServer.Shutdown()
++	if err != nil {
++		l.Error(fmt.Errorf("app - Run - httpServer.Shutdown: %w", err))
++	}
++
++	err = rmqServer.Shutdown()
++	if err != nil {
++		l.Error(fmt.Errorf("app - Run - rmqServer.Shutdown: %w", err))
++	}
++
++	err = rmqClient.Shutdown()
++	if err != nil {
++		l.Fatal("RabbitMQ RPC Client - shutdown error - rmqClient.RemoteCall", err)
++	}
++
++	wsServer.Shutdown()
++}
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"VcsDirectoryMappings\">\n    <mapping directory=\"$PROJECT_DIR$/..\" vcs=\"Git\" />\n    <mapping directory=\"$PROJECT_DIR$/../test_backend\" vcs=\"Git\" />\n    <mapping directory=\"$PROJECT_DIR$/../test_front\" vcs=\"Git\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+--- a/.idea/vcs.xml	(revision 15244d37e4a444f5cd1358ade7ba6d32c6d15eed)
++++ b/.idea/vcs.xml	(date 1764592281994)
+@@ -2,6 +2,7 @@
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+     <mapping directory="$PROJECT_DIR$/../test_backend" vcs="Git" />
+     <mapping directory="$PROJECT_DIR$/../test_front" vcs="Git" />
+   </component>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"ALL\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"2bb72d72-1950-4b05-a6f0-d77b1a341c87\" name=\"Changes\" comment=\"\">\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/app/routes/index.tsx\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/env.d.ts\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/features/books/api/index.ts\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/features/books/model/useBooks.ts\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/features/books/ui/BookCard.tsx\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/features/books/ui/BookList.tsx\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/pages/books/index.tsx\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/shared/api/base.ts\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/src/shared/types/book.ts\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/../test_front/tsconfig.json\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/../test_backend\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../test_backend\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/../test_front\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../test_front\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/../test_front/.gitignore\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../test_front/.gitignore\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/../test_front/package-lock.json\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../test_front/package-lock.json\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/../test_front/package.json\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../test_front/package.json\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"GOROOT\" url=\"file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64\" />\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 4\n}</component>\n  <component name=\"ProjectId\" id=\"34Mw3DGcrgqurSZ7DgZnwfEzNqP\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;Go Build.go build test_go/cmd/app.executor&quot;: &quot;Run&quot;,\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\n    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,\n    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/home/alice/test_go_monorepo/test_go&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;\n  },\n  &quot;keyToStringList&quot;: {\n    &quot;DatabaseDriversLRU&quot;: [\n      &quot;postgresql&quot;\n    ]\n  }\n}</component>\n  <component name=\"RunManager\">\n    <configuration name=\"go build test_go/cmd/app\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"test_go\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"PACKAGE\" />\n      <package value=\"test_go/cmd/app\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <filePath value=\"$PROJECT_DIR$/cmd/app/main.go\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Go Build.go build test_go/cmd/app\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-gosdk-3b128438d3f6-34ac7aa8f6ab-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-251.23774.430\" />\n        <option value=\"bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-GO-251.23774.430\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"2bb72d72-1950-4b05-a6f0-d77b1a341c87\" name=\"Changes\" comment=\"\" />\n      <created>1761036547263</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1761036547263</updated>\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"VgoProject\">\n    <settings-migrated>true</settings-migrated>\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <line-breakpoint enabled=\"true\" type=\"DlvLineBreakpoint\">\n          <url>file://$PROJECT_DIR$/internal/usecase/operation/operation.go</url>\n          <line>126</line>\n          <option name=\"timeStamp\" value=\"1\" />\n        </line-breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 15244d37e4a444f5cd1358ade7ba6d32c6d15eed)
++++ b/.idea/workspace.xml	(date 1764592282000)
+@@ -5,30 +5,30 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="2bb72d72-1950-4b05-a6f0-d77b1a341c87" name="Changes" comment="">
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/app/routes/index.tsx" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/env.d.ts" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/api/index.ts" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/model/useBooks.ts" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/ui/BookCard.tsx" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/features/books/ui/BookList.tsx" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/pages/books/index.tsx" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/shared/api/base.ts" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/src/shared/types/book.ts" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/../test_front/tsconfig.json" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/../test_backend" beforeDir="false" afterPath="$PROJECT_DIR$/../test_backend" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/../test_front" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/../test_front/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/.gitignore" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/../test_front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/package-lock.json" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/../test_front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../test_front/package.json" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/cmd/app/main.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/../test_common" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$" beforeDir="false" afterPath="$PROJECT_DIR$" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+     <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Go File" />
++      </list>
++    </option>
+   </component>
+   <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64" />
+   <component name="Git.Settings">
+-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
++    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++    <option name="ROOT_SYNC" value="DONT_SYNC" />
+   </component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 4
+@@ -38,31 +38,32 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Go Build.go build test_go/cmd/app.executor&quot;: &quot;Run&quot;,
+-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;/home/alice/test_go_monorepo/test_go&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "DefaultGoTemplateProperty": "Go File",
++    "Go Build.go build test_go/cmd/app.executor": "Run",
++    "ModuleVcsDetector.initialDetectionPerformed": "true",
++    "RunOnceActivity.GoLinterPluginOnboarding": "true",
++    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "RunOnceActivity.git.unshallow": "true",
++    "RunOnceActivity.go.formatter.settings.were.checked": "true",
++    "RunOnceActivity.go.migrated.go.modules.settings": "true",
++    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
++    "git-widget-placeholder": "15244d37",
++    "go.import.settings.migrated": "true",
++    "go.sdk.automatically.set": "true",
++    "last_opened_file_path": "/home/alice/test_go_monorepo/test_api",
++    "node.js.detected.package.eslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm"
+   },
+-  &quot;keyToStringList&quot;: {
+-    &quot;DatabaseDriversLRU&quot;: [
+-      &quot;postgresql&quot;
++  "keyToStringList": {
++    "DatabaseDriversLRU": [
++      "postgresql"
+     ]
+   }
+-}</component>
++}]]></component>
+   <component name="RunManager">
+     <configuration name="go build test_go/cmd/app" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+       <module name="test_go" />

@@ -35,7 +35,8 @@ type (
 
 	// Log -.
 	Log struct {
-		Level string `env:"LOG_LEVEL,required"`
+		Level    string `env:"LOG_LEVEL,required"`
+		FileName string `env:"LOG_FILE_NAME,required"`
 	}
 
 	// PG -.

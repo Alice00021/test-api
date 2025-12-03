@@ -1,4 +1,4 @@
-package rmq
+package usecase
 
 import (
 	"context"
@@ -6,21 +6,21 @@ import (
 )
 
 type (
-	AuthRMQ interface {
+	Auth interface {
 		Register(context.Context, back.CreateUserInput) (*back.User, error)
 		Login(context.Context, back.AuthenticateInput) (*back.TokenPair, error)
 		VerifyEmail(context.Context, back.VerifyEmail) error
 	}
 
-	AuthorRMQ interface {
+	Author interface {
 		CreateAuthor(context.Context, back.CreateAuthorInput) (*back.Author, error)
 		UpdateAuthor(context.Context, back.UpdateAuthorInput) error
-		GetAuthor(context.Context, int64) (*back.Author, error)
 		GetAuthors(context.Context) ([]*back.Author, error)
+		GetAuthor(context.Context, int64) (*back.Author, error)
 		DeleteAuthor(context.Context, int64) error
 	}
 
-	BookRMQ interface {
+	Book interface {
 		CreateBook(context.Context, back.CreateBookInput) (*back.Book, error)
 		UpdateBook(context.Context, back.UpdateBookInput) error
 		GetBook(context.Context, int64) (*back.Book, error)
@@ -28,16 +28,16 @@ type (
 		DeleteBook(context.Context, int64) error
 	}
 
-	CommandRMQ interface {
+	Command interface {
 		UpdateCommands(context.Context) error
 		GetCommands(context.Context) ([]*back.Command, error)
 	}
 
-	OperationRMQ interface {
+	Operation interface {
 		CreateOperation(context.Context, back.CreateOperationInput) (*back.Operation, error)
 		UpdateOperation(context.Context, back.UpdateOperationInput) error
-		GetOperation(context.Context, int64) (*back.Operation, error)
 		GetOperations(context.Context) ([]*back.Operation, error)
+		GetOperation(context.Context, int64) (*back.Operation, error)
 		DeleteOperation(context.Context, int64) error
 	}
 )

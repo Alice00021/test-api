@@ -51,6 +51,7 @@ func NewRouter(handler *gin.Engine, cfg *config.Config, l logger.Interface, uc *
 	privateV1Group := handler.Group("/v1")
 	privateV1Group.Use(middleware.JwtAuthMiddleware(uc.Auth))
 	{
+		v1.NewAuthRoutes(privateV1Group, l, uc.Auth)
 		v1.NewAuthorRoutes(privateV1Group, l, uc.Author)
 		v1.NewBookRoutes(privateV1Group, l, uc.Book)
 		v1.NewCommandRoutes(privateV1Group, l, uc.Command)

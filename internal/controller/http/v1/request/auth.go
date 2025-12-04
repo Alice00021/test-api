@@ -25,6 +25,19 @@ type AuthenticateRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
+func (req *AuthenticateRequest) ToEntity() back.AuthenticateInput {
+	return back.AuthenticateInput{
+		Username: req.Username,
+		Password: req.Password,
+	}
+}
+
 type VerifyEmailRequest struct {
 	Token string `form:"token" validate:"required"`
+}
+
+func (req *VerifyEmailRequest) ToEntity() back.VerifyEmail {
+	return back.VerifyEmail{
+		Token: req.Token,
+	}
 }

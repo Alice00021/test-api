@@ -17,7 +17,7 @@ func NewCommandRMQ(client *client.Client, receivers config.RMQReceivers) *Comman
 }
 
 func (m *CommandRMQ) UpdateCommands(ctx context.Context) error {
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.updateCommands", nil, nil)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.updateCommands", nil, nil)
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (m *CommandRMQ) UpdateCommands(ctx context.Context) error {
 func (m *CommandRMQ) GetCommands(ctx context.Context) ([]*back.Command, error) {
 	var resp []*back.Command
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.getCommands", nil, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.getCommands", nil, &resp)
 	if err != nil {
 		return nil, err
 	}

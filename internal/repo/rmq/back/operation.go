@@ -17,7 +17,7 @@ func NewOperationRMQ(client *client.Client, receivers config.RMQReceivers) *Oper
 }
 func (m *OperationRMQ) CreateOperation(ctx context.Context, inp back.CreateOperationInput) (*back.Operation, error) {
 	var resp *back.Operation
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.createOperation", inp, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.createOperation", inp, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (m *OperationRMQ) CreateOperation(ctx context.Context, inp back.CreateOpera
 }
 
 func (m *OperationRMQ) UpdateOperation(ctx context.Context, inp back.UpdateOperationInput) error {
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.updateOperation", inp, nil)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.updateOperation", inp, nil)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (m *OperationRMQ) GetOperation(ctx context.Context, id int64) (*back.Operat
 	req := make(map[string]int64)
 	req["id"] = id
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.getOperation", req, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.getOperation", req, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (m *OperationRMQ) GetOperation(ctx context.Context, id int64) (*back.Operat
 func (m *OperationRMQ) GetOperations(ctx context.Context) ([]*back.Operation, error) {
 	var resp []*back.Operation
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.getOperations", nil, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.getOperations", nil, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (m *OperationRMQ) DeleteOperation(ctx context.Context, id int64) error {
 	req := make(map[string]int64)
 	req["id"] = id
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.deleteOperation", req, nil)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.deleteOperation", req, nil)
 	if err != nil {
 		return err
 	}

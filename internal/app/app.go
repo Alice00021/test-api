@@ -42,7 +42,7 @@ func Run(cfg *config.Config) {
 	}
 
 	// UseCase
-	uc := di.NewUseCase(rmqClient, wsServer, cfg)
+	uc := di.NewUseCase(rmqClient, cfg)
 
 	// RabbitMQ RPC Server
 	rmqRouter := amqprpc.NewRouter(uc, l)
@@ -54,7 +54,7 @@ func Run(cfg *config.Config) {
 
 	// HTTP Server
 	handler := gin.New()
-	http.NewRouter(handler, cfg, l, uc, wsServer)
+	http.NewRouter(handler, cfg, l, uc)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
 
 	// Waiting signal
@@ -86,5 +86,4 @@ func Run(cfg *config.Config) {
 		l.Fatal("RabbitMQ RPC Client - shutdown error - rmqClient.RemoteCall", err)
 	}
 
-	wsServer.Shutdown()
 }

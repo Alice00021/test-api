@@ -55,15 +55,12 @@ type (
 
 	// RMQReceivers -.
 	RMQReceivers struct {
-		AuthService string `env:"RMQ_RECEIVERS_AUTH_SERVICE,required"`
-		TxService   string `env:"RMQ_RECEIVERS_TX_SERVICE,required"`
-		FileService string `env:"RMQ_RECEIVERS_FILE_SERVICE,required"`
+		BackService string `env:"RMQ_RECEIVERS_BACKEND_SERVICE,required"`
 	}
 
 	// WebapiReceivers -.
 	WebapiReceivers struct {
-		TxService   string `env:"WEBAPI_RECEIVERS_TX_SERVICE,required"`
-		FileService string `env:"WEBAPI_RECEIVERS_FILE_SERVICE,required"`
+		BackService string `env:"WEBAPI_RECEIVERS_BACKEND_SERVICE,required"`
 	}
 
 	// Metrics -.

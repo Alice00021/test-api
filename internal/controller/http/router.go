@@ -10,7 +10,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"golang.org/x/net/websocket"
 	"net/http"
 
 	_ "github.com/Alice00021/test_common/pkg/httpserver"
@@ -18,14 +17,14 @@ import (
 
 // NewRouter -.
 // Swagger spec:
-// @title Finance API
+// @title Test API
 // @version 1.0
 // @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 // @description JWT security accessToken. Please add it in the format "Bearer {AccessToken}" to authorize your requests.
-func NewRouter(handler *gin.Engine, cfg *config.Config, l logger.Interface, uc *di.UseCase, ws *websocket.Server) {
+func NewRouter(handler *gin.Engine, cfg *config.Config, l logger.Interface, uc *di.UseCase) {
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())

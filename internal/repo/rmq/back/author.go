@@ -17,7 +17,7 @@ func NewAuthorRMQ(client *client.Client, receivers config.RMQReceivers) *AuthorR
 }
 func (m *AuthorRMQ) CreateAuthor(ctx context.Context, inp back.CreateAuthorInput) (*back.Author, error) {
 	var resp *back.Author
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.createAuthor", inp, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.createAuthor", inp, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (m *AuthorRMQ) CreateAuthor(ctx context.Context, inp back.CreateAuthorInput
 }
 
 func (m *AuthorRMQ) UpdateAuthor(ctx context.Context, inp back.UpdateAuthorInput) error {
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.updateAuthor", inp, nil)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.updateAuthor", inp, nil)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (m *AuthorRMQ) GetAuthor(ctx context.Context, id int64) (*back.Author, erro
 	req := make(map[string]int64)
 	req["id"] = id
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.getAuthor", req, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.getAuthor", req, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (m *AuthorRMQ) GetAuthor(ctx context.Context, id int64) (*back.Author, erro
 func (m *AuthorRMQ) GetAuthors(ctx context.Context) ([]*back.Author, error) {
 	var resp []*back.Author
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.getAuthors", nil, &resp)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.getAuthors", nil, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (m *AuthorRMQ) DeleteAuthor(ctx context.Context, id int64) error {
 	req := make(map[string]int64)
 	req["id"] = id
 
-	err := m.RemoteCall(ctx, m.Receivers.TxService, "v1.deleteAuthor", req, nil)
+	err := m.RemoteCall(ctx, m.Receivers.BackService, "v1.deleteAuthor", req, nil)
 	if err != nil {
 		return err
 	}

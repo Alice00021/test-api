@@ -5,7 +5,7 @@ import (
 	"errors"
 	er "github.com/Alice00021/test_api/internal/controller/http/errors"
 	"github.com/Alice00021/test_api/internal/entity"
-	"github.com/Alice00021/test_api/internal/entity/auth"
+	auth "github.com/Alice00021/test_api/internal/entity/back"
 	"github.com/Alice00021/test_api/internal/usecase"
 	httpError "github.com/Alice00021/test_common/pkg/httpserver"
 	"github.com/gin-gonic/gin"

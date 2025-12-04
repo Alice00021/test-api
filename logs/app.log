@@ -1,0 +1,1 @@
+{"level":"info","time":"2025-12-04T11:46:59+03:00","caller":"/home/alice/test_go_monorepo/test_api/cmd/app/main.go:18","message":"app - Run - signal: interrupt"}

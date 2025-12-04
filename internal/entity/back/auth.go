@@ -13,3 +13,12 @@ type TokenPair struct {
 type VerifyEmail struct {
 	Token string `form:"token" validate:"required"`
 }
+
+type UserInfoToken struct {
+	ID   int64    `json:"id"`
+	Role UserRole `json:"role"`
+}
+
+func (u *UserInfoToken) IsEqualRole(role UserRole) bool {
+	return u.Role == role
+}

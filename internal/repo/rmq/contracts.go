@@ -10,6 +10,7 @@ type (
 		Register(context.Context, back.CreateUserInput) (*back.User, error)
 		Login(context.Context, back.AuthenticateInput) (*back.TokenPair, error)
 		VerifyEmail(context.Context, back.VerifyEmail) error
+		Validation(context.Context, string) (*back.UserInfoToken, error)
 	}
 
 	AuthorRMQ interface {

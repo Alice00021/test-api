@@ -25,3 +25,7 @@ func (u *UseCase) Login(ctx context.Context, inp back.AuthenticateInput) (*back.
 func (u *UseCase) VerifyEmail(ctx context.Context, inp back.VerifyEmail) error {
 	return u.rmq.VerifyEmail(ctx, inp)
 }
+
+func (u *UseCase) Validation(ctx context.Context, accessToken string) (*back.UserInfoToken, error) {
+	return u.rmq.Validation(ctx, accessToken)
+}
